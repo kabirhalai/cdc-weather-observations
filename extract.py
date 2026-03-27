@@ -1,7 +1,10 @@
 from urllib.request import urlretrieve
 from pathlib import Path
+import duckdb
 
 import pandas as pd
+
+con=duckdb.connect(Path.cwd() / "warehouse.duckdb")
 
 cwd = Path.cwd()
 raw_dir_prefix = f"raw/CDC"
@@ -141,8 +144,10 @@ s4 = [
     "Gn",
 ]
 
-MAIN_URL = "https://opendata.dwd.de/climate_environment/CDC/observations_global/CLIMAT/monthly/raw/"
+WEATHER_OBSERVATIONS_URL = "https://opendata.dwd.de/climate_environment/CDC/observations_global/CLIMAT/monthly/raw/"
 FILE_PREFIX = "CLIMAT_RAW_"
+
+STATIONS_URL="https://opendata.dwd.de/climate_environment/CDC/help/stations_list_CLIMAT_data.txt"
 
 
 def extract(year: int, month: int = None) -> str:
@@ -188,7 +193,7 @@ def extract_for_year_and_month(year: int, month: int) -> str:
     # Construct the file name
     file_name = f"{FILE_PREFIX}{year}{month_str}.txt"
     # Construct the full URL
-    url = f"{MAIN_URL}{file_name}"
+    url = f"{WEATHER_OBSERVATIONS_URL}{file_name}"
 
     Path.mkdir(cwd / raw_dir_prefix / f"{year}", parents=True, exist_ok=True)
 
@@ -348,27 +353,19 @@ def process_section_files_into_parquet() -> None:
 if __name__ == "__main__":
     years = list(range(2020, 2025))
 
-    _ = list(map(lambda year: extract(year), years))
+    con.sql("" \
+    "CREATE SCHEMA IF NOT EXISTS raw;" \
+    "USE raw;")
 
-    for year in years:
-        p = Path(cwd / raw_dir_prefix / f"{year}")
-        for file in p.glob("*.txt"):
-            print(f"Processing {file} into section files...")
-            try:
-                split_into_section_files(file)
-                print(f"Processed {file} into section files successfully.")
-            except:
-                print(f"Error processing {file} into section files. Skipping.")
-                continue
+    for file in Path(cwd / processed_dir_prefix).glob("*.parquet"):
+        print(f"Loading {file} into duckdb...")
+        con.sql(f"CREATE VIEW IF NOT EXISTS {file.stem} AS SELECT * FROM read_parquet('{file}');")
 
-    print(f"Processing section files into parquet...")
-    try:
-        process_section_files_into_parquet()
-    except Exception as e:
-        print(f"Error processing section files into parquet: {e}")
+    # The file uses Western European encoding
+    stations_df = pd.read_csv(STATIONS_URL, sep=";", encoding='latin-1')
 
-    # process into section specific parquet files
-    # load into duckdb as raw tables
+    con.sql("" \
+    "CREATE OR REPLACE TABLE stations AS SELECT * FROM stations_df;")
 
     # think about other data sources to extract and add
 

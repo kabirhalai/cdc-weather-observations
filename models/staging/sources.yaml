@@ -1,0 +1,259 @@
+sources:
+- name: raw
+  description: Raw CLIMAT monthly observations data from DWD.
+  schema: raw
+  tables:
+    - name: section_1
+      description: Monthly climate data including temperature, precipitation, wind,
+        pressure, and sunshine duration.
+      columns:
+      - name: sn
+        description: Sign of the data, coded 0 Positive or zero (for temperature) 1
+          Negative (for temperature) 9 Indicator that relative humidity follows
+      - name: "year\r\n \r\nmonth"
+        description: Month of the year
+      - name: IIiii
+        description: WMO Station number
+      - name: G1
+        description: group index of section 1 of the CLIMAT report
+      - name: Po
+        description: Monthly mean pressure at station level, in tenths of a hectopascal
+      - name: P
+        description: Monthly mean sea level pressure, in tenths of a hectopascal,        or
+          for stations in mountainous regions monthly mean geopotential, in standard
+          geopotential metres
+      - name: sn
+        description: Sign of the data, and relative humidity indicator
+      - name: T
+        description: Monthly mean air temperature, in tenths of a degree Celsius, its
+          sign being given by sn
+      - name: st
+        description: Standard deviation of daily mean temperatures of the month, in
+          tenths of a degree Celsius
+      - name: Tx
+        description: Mean daily maximum air temperature of the month, in tenths of a
+          degree Celsius, its sign       being given by sn
+      - name: Tn
+        description: Mean daily minimum air temperature of the month, in tenths of a
+          degree Celsius, its sign       being given by sn
+      - name: e
+        description: Mean vapour pressure for the month, in tenths of a hectopascal
+      - name: R1
+        description: Total precipitation for the month in millimetres
+      - name: Rd
+        description: Frequency group (quintile) within R1 falls
+      - name: nr
+        description: Number of days in the month with precipitation equal to or greater
+          than 1 millimetre
+      - name: S1
+        description: Total sunshine for the month in hours
+      - name: ps
+        description: Percentage of total sunshine duration relative to the normal
+      - name: mP
+        description: Number of days missing from the records for pressure
+      - name: mT
+        description: Number of days missing from the records for air temperature
+      - name: mTx
+        description: Number of days missing from the record for daily maximum air temperature
+      - name: mTn
+        description: Number of days missing from the record for daily minimum air temperature
+      - name: me
+        description: Number of days missing from the records for vapour pressure
+      - name: mR
+        description: Number of days missing from the records for precipitation
+      - name: mS
+        description: Number of days missing from the records for sunshine duration
+    - name: section_2
+      description: Normal values or additional monthly climate data.
+      columns:
+      - name: G2
+        description: group index of section 2
+      - name: Yb
+        description: Year of beginning of the reference period
+      - name: Yc
+        description: Year of ending of the reference period
+      - name: Po
+        description: Monthly mean pressure at station level, in tenths of a hectopascal
+      - name: P
+        description: Monthly mean pressure, in tenths of a hectopascal       or for
+          stations in mountainous regions monthly mean geopotential, in standard geopotential
+          metres
+      - name: sn
+        description: Sign of the data, and relative humidity indicator
+      - name: T
+        description: Monthly mean air temperature, in tenths of a degree Celsius, its
+          sign being given by sn
+      - name: st
+        description: Standard deviation of daily mean values relative to the monthly
+          mean air temperature, in       tenths of a degree Celsius
+      - name: Tx
+        description: Mean daily maximum air temperature of the month, in tenths of a
+          degree Celsius, its sign       being given by sn
+      - name: Tn
+        description: Mean daily minimum air temperature of the month, in tenths of a
+          degree Celsius, its sign       being given by sn
+      - name: e
+        description: Mean vapour pressure for the month, in tenths of a hectopascal
+      - name: R1
+        description: Total precipitation for the month in millimetres
+      - name: nr
+        description: Number of days in the month with precipitation equal to or greater
+          than 1 millimetre
+      - name: S1
+        description: Total sunshine for the month in hours
+      - name: yP
+        description: Number of missing years within the reference period from the calculation
+          of pressure normal
+      - name: yR
+        description: Number of missing years within the reference period from the calculation
+          of normal for       precipitation
+      - name: yS
+        description: Number of missing years within the reference period from the calculation
+          of normal for       sunshine duration
+      - name: yT
+        description: Number of missing years within the reference period from the calculation
+          of normal for       mean air temperature
+      - name: yTx
+        description: Number of missing years within the reference period from the calculation
+          of normal for       mean extreme air temperature
+      - name: ye
+        description: Number of missing years within the reference period from the calculation
+          of vapour       pressure normal
+    - name: section_3
+      description: Days with parameters exceeding specific threshold values.
+      columns:
+      - name: G3
+        description: group index of section 3
+      - name: T25
+        description: "Number of days in the month with maximum air temperature equal\
+          \ to or more than 25\xB0C"
+      - name: T30
+        description: "Number of days in the month with maximum air temperature equal\
+          \ to or more than 30\xB0C"
+      - name: T35
+        description: "Number of days in the month with maximum air temperature equal\
+          \ to or more than 35\xB0C"
+      - name: T40
+        description: "Number of days in the month with maximum air temperature equal\
+          \ to or more than 40\xB0C"
+      - name: Tn0
+        description: "Number of days in the month with minimum air temperature less\
+          \ than 0\xB0C"
+      - name: Tx0
+        description: "Number of days in the month with maximum air temperature less\
+          \ than 0\xB0C"
+      - name: R01
+        description: Number of days in the month with precipitation equal to or more
+          than 1.0 mm
+      - name: R05
+        description: Number of days in the month with precipitation equal to or more
+          than 5.0 mm
+      - name: R10
+        description: Number of days in the month with precipitation equal to or more
+          than 10.0 mm
+      - name: R50
+        description: Number of days in the month with precipitation equal to or more
+          than 50.0 mm
+      - name: R100
+        description: Number of days in the month with precipitation equal to or more
+          than 100.0 mm
+      - name: R150
+        description: Number of days in the month with precipitation equal to or more
+          than 150.0 mm
+      - name: s00
+        description: Number of days in the month with snow depth more than 0 cm
+      - name: s01
+        description: Number of days in the month with snow depth more than 1 cm
+      - name: s10
+        description: Number of days in the month with snow depth more than 10 cm
+      - name: s50
+        description: Number of days in the month with snow depth more than 50 cm
+      - name: f10
+        description: Number of days in the month with observed or recorded wind speed
+          equal to or more than        10 metres per second or 20 knots
+      - name: f20
+        description: Number of days in the month with observed or recorded wind speed
+          equal to or more than        20 metres per second or 40 knots
+      - name: f30
+        description: Number of days in the month with observed or recorded wind speed
+          equal to or more than        30 metres per second or 60 knots
+      - name: V1
+        description: Number of days in the month with observed or recorded visibility
+          less than 50 m, irrespective        of the duration of the observational period
+      - name: V2
+        description: Number of days in the month with observed or recorded visibility
+          less than 100 m, irrespective        of the duration of the observational
+          period
+      - name: V3
+        description: Number of days in the month with observed or recorded visibility
+          less than 1 000 m, irrespective        of the duration of the observational
+          period
+    - name: section_4
+      description: Extreme values of temperature, precipitation, wind speed.
+      columns:
+      - name: G4
+        description: group index of section 4
+      - name: sn
+        description: sign of the data, and relative humidity indicator
+      - name: Txd
+        description: Highest daily mean air temperature of the month, in tenths of a
+          degree Celsius, its sign       being given by sn
+      - name: yx
+        description: Day of highest daily mean air temperature during the month
+      - name: Tnd
+        description: Lowest daily mean air temperature of the month, in tenths of a
+          degree Celsius, its sign       being given by sn
+      - name: yn
+        description: Day of lowest daily mean air temperature during the month
+      - name: Tax
+        description: Highest air temperature of the month, in tenths of a degree Celsius,
+          its sign being given by sn
+      - name: yax
+        description: Day of highest air temperature during the month
+      - name: Tan
+        description: Lowest air temperature of the month, in tenths of a degree Celsius,
+          its sign being given by sn
+      - name: yan
+        description: Day of lowest air temperature during the month
+      - name: Rx
+        description: Highest daily amount of precipitation during the month, in tenths
+          of a millimetre
+      - name: yr
+        description: Day of highest daily amount of precipitation during the month
+      - name: iw
+        description: Indicator for source and units of wind speed
+      - name: fx
+        description: Highest gust wind speed observed or recorded during the month,
+          in tenths of units       indicated by iw
+      - name: yfx
+        description: Day of highest observed or recorded wind speed during the month
+      - name: Dts
+        description: Number of days in the month with thunderstorm(s).
+      - name: Dgr
+        description: Number of days in the month with hail.
+      - name: iy
+        description: Indicator to specify type of reading of extreme temperatures (only
+          to report in the case of changes)
+      - name: Gn
+        description: Principal time of daily reading in UTC (hours) of minimum extreme
+          temperature
+      - name: Gx
+        description: Principal time of daily reading in UTC (hours) of maximum extreme
+          temperature
+    - name: stations
+      description: Station metadata including location and identification information.
+      columns:
+      - name: WMO-StationID
+        description: Unique station identifier - WMO number
+      - name: StationName
+        description: Name of the weather station
+      - name: Latitude
+        description: Station latitude coordinate
+      - name: Longitude
+        description: Station longitude coordinate
+      - name: Altitude
+        description: Station altitude above sea level (meters)
+      - name: Height
+        description: Height of the station above ground level (meters)
+      - name: country
+        description: Country where the station is located

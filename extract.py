@@ -1,10 +1,9 @@
 from urllib.request import urlretrieve
 from pathlib import Path
-import duckdb
-
 import pandas as pd
+from prefect import task
 
-con=duckdb.connect(Path.cwd() / "warehouse.duckdb")
+import duckdb
 
 cwd = Path.cwd()
 raw_dir_prefix = f"raw/CDC"
@@ -147,9 +146,12 @@ s4 = [
 WEATHER_OBSERVATIONS_URL = "https://opendata.dwd.de/climate_environment/CDC/observations_global/CLIMAT/monthly/raw/"
 FILE_PREFIX = "CLIMAT_RAW_"
 
-STATIONS_URL="https://opendata.dwd.de/climate_environment/CDC/help/stations_list_CLIMAT_data.txt"
+STATIONS_URL = (
+    "https://opendata.dwd.de/climate_environment/CDC/help/stations_list_CLIMAT_data.txt"
+)
 
 
+#@task
 def extract(year: int, month: int = None) -> str:
     """
     Extracts the CLIMAT data for the given year and month.
@@ -206,6 +208,7 @@ def extract_for_year_and_month(year: int, month: int) -> str:
     return ""
 
 
+#@task
 def split_into_section_files(file: Path) -> None:
     try:
         df = pd.read_csv(file, sep=";")
@@ -254,7 +257,7 @@ def cleaning_col_values(section, df_list):
             "mTn",
             "me",
             "mR",
-            "mS"
+            "mS",
         ],
         "section_2": [
             "Po.1",
@@ -272,7 +275,8 @@ def cleaning_col_values(section, df_list):
             "S1.1",
             "Yb",
             "Yc",
-            "YTx", "YR"
+            "YTx",
+            "YR",
         ],
         "section_3": [
             "T25",
@@ -311,7 +315,9 @@ def cleaning_col_values(section, df_list):
             "Gx",
             "Gn",
             "yn",
-            "yr", "yan", "yfx"
+            "yr",
+            "yan",
+            "yfx",
         ],
     }
 
@@ -322,6 +328,7 @@ def cleaning_col_values(section, df_list):
     return combined_df
 
 
+#@task
 def process_section_files_into_parquet() -> None:
     try:
         p = Path(cwd / processed_dir_prefix)
@@ -350,25 +357,45 @@ def process_section_files_into_parquet() -> None:
         raise e
 
 
-if __name__ == "__main__":
-    years = list(range(2020, 2025))
-
-    con.sql("" \
-    "CREATE SCHEMA IF NOT EXISTS raw;" \
-    "USE raw;")
+#@task
+def loading_parquet_into_raw_tables():
+    _ = run_in_duckdb("CREATE SCHEMA IF NOT EXISTS raw;")
 
     for file in Path(cwd / processed_dir_prefix).glob("*.parquet"):
         print(f"Loading {file} into duckdb...")
-        con.sql(f"CREATE VIEW IF NOT EXISTS {file.stem} AS SELECT * FROM read_parquet('{file}');")
+        try:
+            _ = run_in_duckdb(
+                f"CREATE VIEW IF NOT EXISTS {file.stem} AS SELECT * FROM read_parquet('{file}');",
+                'raw'
+            )
+        except Exception as e:
+            print(f"Error loading {file} into duckdb: {e}")
+            continue
+    return
 
+
+#@task
+def load_stations_data():
     # The file uses Western European encoding
-    stations_df = pd.read_csv(STATIONS_URL, sep=";", encoding='latin-1')
+    stations_df = pd.read_csv(STATIONS_URL, sep=";", encoding="latin-1")
 
-    con.sql("" \
-    "CREATE OR REPLACE TABLE stations AS SELECT * FROM stations_df;")
+    conn=duckdb.connect(Path.cwd() / "data" / "warehouse.duckdb")
+    conn.register("stations_df", stations_df)
+    conn.execute("USE raw; CREATE OR REPLACE TABLE stations AS SELECT * FROM stations_df;")
 
-    # think about other data sources to extract and add
+    return
 
-    # write dbt models to transform the data into a more usable format
 
-    # build dashboards
+#@task
+def run_in_duckdb(query: str, schema: str=None):
+    try:
+        con = duckdb.connect(Path.cwd() / "data" / "warehouse.duckdb")
+        query = f"USE {schema}; {query}" if schema else query
+        result = con.sql(query)
+        if result is not None:
+            return result.fetchdf()
+        print(f"Query executed successfully: {query}")
+        return result
+    except Exception as e:
+        print(f"Error executing query: {query}, error: {e}")
+        raise e

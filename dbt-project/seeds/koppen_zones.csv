@@ -1,0 +1,23 @@
+zone_code,zone_name,zone_category
+Af,Tropical Rainforest,Tropical
+Am,Tropical Monsoon,Tropical
+Aw,Tropical Savanna,Tropical
+As,Tropical Savanna (dry summer),Tropical
+BWh,Hot Desert,Arid
+BWk,Cold Desert,Arid
+BSh,Hot Steppe,Arid
+BSk,Cold Steppe,Arid
+Csa,Mediterranean Hot Summer,Temperate
+Csb,Mediterranean Warm Summer,Temperate
+Csc,Mediterranean Cool Summer,Temperate
+Cfa,Humid Subtropical,Temperate
+Cfb,Oceanic,Temperate
+Cfc,Subpolar Oceanic,Temperate
+Cw,Dry Winter,Temperate
+Dfa,Hot Summer Continental,Cold
+Dfb,Warm Summer Continental,Cold
+Dfc,Subarctic,Cold
+Dfd,Extremely Continental Subarctic,Cold
+Dw,Dry Winter Continental,Cold
+ET,Tundra,Polar
+EF,Ice Cap,Polar

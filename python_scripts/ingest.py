@@ -1,5 +1,8 @@
 from extract import *
+import os
 
+start_year = os.environ.get("START_YEAR")
+end_year = os.environ.get("END_YEAR")
 
 #@flow(log_prints=True)
 def etl_flow(year_start, year_end):
@@ -29,4 +32,4 @@ def etl_flow(year_start, year_end):
     load_stations_data()
 
 if __name__ == "__main__":
-    etl_flow(2020, 2022)
+    etl_flow(int(start_year), int(end_year))

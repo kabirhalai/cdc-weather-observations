@@ -25,6 +25,8 @@ services:
     volumes:
       - ./data:/app/data 
     environment:
+      - START_YEAR=${START_YEAR}
+      - END_YEAR=${END_YEAR}
       - PREFECT_API_URL=http://prefect-server:4200/api
     depends_on:
       prefect-server:

@@ -4,8 +4,10 @@ pipeline:
 dashboard:
 	docker-compose up evidence
 
-all:
-	docker-compose up --build --abort-on-container-exit --exit-code-from pipeline prefect-server pipeline
+project:
+	docker-compose up -d --build prefect-server
+	START_YEAR=$(START_YEAR) END_YEAR=$(END_YEAR) docker-compose up --build pipeline
+    # Start evidence
 	docker compose up -d --build --no-deps evidence
 
 ui:

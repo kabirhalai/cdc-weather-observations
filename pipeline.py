@@ -2,6 +2,8 @@ import subprocess
 import os
 from prefect import flow, task, get_run_logger
 
+start_year = os.environ.get("START_YEAR")
+end_year = os.environ.get("END_YEAR")
 
 @task(name="ingest", retries=2, retry_delay_seconds=30)
 def ingest():
@@ -70,7 +72,7 @@ def dbt_test():
 
 
 @flow(name="climate-pipeline", log_prints=True)
-def climate_pipeline():
+def climate_pipeline(start_year, end_year):
     ingest_result = ingest()
     debug_result = dbt_debug(wait_for=[ingest_result])
     run_result = dbt_run(wait_for=[debug_result])
@@ -78,4 +80,4 @@ def climate_pipeline():
 
 
 if __name__ == "__main__":
-    climate_pipeline()
+    climate_pipeline(start_year, end_year)

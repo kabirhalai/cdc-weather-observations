@@ -32,10 +32,10 @@ services:
 
   evidence:
     build:
-      context: .
-      dockerfile: ./evidence/Dockerfile
+      context: ./evidence
+      dockerfile: Dockerfile
     volumes:
-      - ./data:/data 
+      - ./data:/app/sources/warehouse/data/
     ports:
       - "3000:3000"
     depends_on:

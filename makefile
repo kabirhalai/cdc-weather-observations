@@ -10,7 +10,10 @@ project:
     # Start evidence
 	docker compose up -d --build --no-deps evidence
 
-ui:
+dashboard:
+	open http://localhost:3000
+
+prefect-server:
 	open http://localhost:4200
 
 down:

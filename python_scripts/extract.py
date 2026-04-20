@@ -1,14 +1,15 @@
 from urllib.request import urlretrieve
 from pathlib import Path
+import os
 import pandas as pd
-from prefect import task
 
 import duckdb
 
-cwd = Path.cwd()
-data_dir = cwd / "data"
-raw_dir_prefix = f"{data_dir}/raw/CDC"
-processed_dir_prefix = f"{data_dir}/processed"
+cwd = Path.cwd() # /app
+data_dir = f"{cwd}/data" # /app/data
+_duckdb_path=f"{data_dir}/warehouse.duckdb" # /app/data/warehouse.duckdb
+raw_dir_prefix = f"{data_dir}/raw/CDC" # /app/data/raw/CDC
+processed_dir_prefix = f"{data_dir}/processed" # /app/data/processed
 
 keys = ["year", "month", "IIiii"]
 s1 = [
@@ -198,10 +199,14 @@ def extract_for_year_and_month(year: int, month: int) -> str:
     # Construct the full URL
     url = f"{WEATHER_OBSERVATIONS_URL}{file_name}"
 
-    Path.mkdir(cwd / raw_dir_prefix / f"{year}", parents=True, exist_ok=True)
+    Path.mkdir(
+        Path(raw_dir_prefix) / f"{year}", 
+        parents=True, 
+        exist_ok=True
+    )
 
     try:
-        urlretrieve(url, f"{cwd}/{raw_dir_prefix}/{year}/{file_name}")
+        urlretrieve(url, f"{raw_dir_prefix}/{year}/{file_name}")
         print(f"Data for {year}-{month_str} extracted successfully.")
     except Exception as e:
         print(f"Error extracting data for {year}-{month_str}: {e}")
@@ -221,13 +226,13 @@ def split_into_section_files(file: Path) -> None:
             "section_4": df[keys + s4],
         }
 
-        parquet_path = Path(cwd / processed_dir_prefix)
+        parquet_path = Path(processed_dir_prefix)
         if not parquet_path.exists():
             parquet_path.mkdir(parents=True, exist_ok=True)
 
         for p_file in parquet_files:
             parquet_files[p_file].to_csv(
-                cwd / processed_dir_prefix / f"{file.stem}_{p_file}.csv", index=False
+                Path(processed_dir_prefix) / f"{file.stem}_{p_file}.csv", index=False
             )
             print(f"Processed {file} into {p_file} csv file.")
     except Exception as e:
@@ -332,7 +337,7 @@ def cleaning_col_values(section, df_list):
 #@task
 def process_section_files_into_parquet() -> None:
     try:
-        p = Path(cwd / processed_dir_prefix)
+        p = Path(processed_dir_prefix)
         sections = ["section_1", "section_2", "section_3", "section_4"]
         for section in sections:
             section_files = list(p.glob(f"*_{section}.csv"))
@@ -345,7 +350,7 @@ def process_section_files_into_parquet() -> None:
             combined_df = cleaning_col_values(section, df_list)
 
             combined_df.to_parquet(
-                cwd / processed_dir_prefix / f"{section}.parquet",
+                Path(processed_dir_prefix) / f"{section}.parquet",
                 index=False,
                 compression="snappy",
             )
@@ -362,7 +367,7 @@ def process_section_files_into_parquet() -> None:
 def loading_parquet_into_raw_tables():
     _ = run_in_duckdb("CREATE SCHEMA IF NOT EXISTS raw;")
 
-    for file in Path(cwd / processed_dir_prefix).glob("*.parquet"):
+    for file in Path(processed_dir_prefix).glob("*.parquet"):
         print(f"Loading {file} into duckdb...")
         try:
             _ = run_in_duckdb(
@@ -380,7 +385,7 @@ def load_stations_data():
     # The file uses Western European encoding
     stations_df = pd.read_csv(STATIONS_URL, sep=";", encoding="latin-1")
 
-    conn=duckdb.connect(Path.cwd() / "data" / "warehouse.duckdb")
+    conn=duckdb.connect(_duckdb_path)
     conn.register("stations_df", stations_df)
     conn.execute("USE raw; CREATE OR REPLACE TABLE stations AS SELECT * FROM stations_df;")
 
@@ -390,7 +395,7 @@ def load_stations_data():
 #@task
 def run_in_duckdb(query: str, schema: str=None):
     try:
-        con = duckdb.connect(Path.cwd() / "data" / "warehouse.duckdb")
+        con = duckdb.connect(_duckdb_path)
         query = f"USE {schema}; {query}" if schema else query
         result = con.sql(query)
         if result is not None:

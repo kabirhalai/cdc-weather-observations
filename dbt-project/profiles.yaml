@@ -1,9 +1,0 @@
-zoomcamp_project:
-  target: dev
-  outputs:
-    dev:
-      type: duckdb
-      path: ./data/warehouse.duckdb
-      threads: 4
-      schema: analytics
-    target: dev

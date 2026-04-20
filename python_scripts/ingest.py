@@ -1,4 +1,3 @@
-from prefect import flow
 from extract import *
 
 

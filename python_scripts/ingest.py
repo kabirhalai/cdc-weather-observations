@@ -3,8 +3,8 @@ import os
 from datetime import datetime
 
 
-start_year = os.environ.get("START_YEAR")
-end_year = os.environ.get("END_YEAR")
+start_year = int(os.environ.get("START_YEAR"))
+end_year = int(os.environ.get("END_YEAR"))
 
 #@flow(log_prints=True)
 def etl_flow(year_start, year_end):
@@ -35,12 +35,11 @@ def etl_flow(year_start, year_end):
 
 if __name__ == "__main__":
     if start_year in [None, ""] or end_year in [None, ""]:
-        print("START_YEAR and END_YEAR environment variables must be set.")
+        raise ValueError("START_YEAR and END_YEAR environment variables must be set.")
     else:
-        if start_year.isdigit() and end_year.isdigit():
-            if start_year < 2003 or end_year > datetime.now().year:
-                print("START_YEAR must be >= 2003 and END_YEAR must be <= current year.")
-            elif start_year > end_year:
-                print("START_YEAR must be less than or equal to END_YEAR.")
-            else:
-                etl_flow(int(start_year), int(end_year))
+        if start_year < 2003 or end_year > datetime.now().year:
+            print("START_YEAR must be >= 2003 and END_YEAR must be <= current year.")
+        elif start_year > end_year:
+            print("START_YEAR must be less than or equal to END_YEAR.")
+        else:
+            etl_flow(start_year, end_year)

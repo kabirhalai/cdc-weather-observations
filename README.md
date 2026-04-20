@@ -100,6 +100,8 @@ Docker Desktop
     ```
 
 4.  **Run Evidence dashboard**
+    > Please wait until evidence sets up. It can take a few minutes.
+
     
     ```bash
     make dashboard
@@ -110,24 +112,6 @@ Docker Desktop
     make prefect-server
     ```
 
-----------
-
-## 📁 Project Structure
-
-```
-project-name/
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Page-level components / routes
-│   ├── hooks/          # Custom React hooks
-│   ├── utils/          # Helper functions
-│   └── types/          # TypeScript type definitions
-├── public/             # Static assets
-├── tests/              # Test files
-├── .env.example        # Environment variable template
-└── README.md
-
-```
 ----------
 
 ## 🗺️ Roadmap

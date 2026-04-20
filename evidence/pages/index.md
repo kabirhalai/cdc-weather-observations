@@ -31,6 +31,8 @@ order by year
 
 ## Station data quality
 
+This section explores the quality of the station data in terms of completeness and coverage. The data is categorized into three quality tiers: SPARSE, MEDIUM, and HIGH based on the percentage of months for which the station has fully complete data, i.e. 0 days with missing data in the month for any detail like percepitation or sunshine. SPARSE stations have less than 50% of months fully complete, MEDIUM stations have between 50% and 80% of months fully complete, and HIGH stations have more than 80% of months fully complete.
+
 ```sql quality_tier_distribution
 select
     quality_tier,

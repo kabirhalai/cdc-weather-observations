@@ -92,6 +92,8 @@ Docker Desktop
     ```
     
 3.  **Run project**
+
+    > [!CAUTION] Please use years between 2003 and the current year since the data is only available for that range. Also, make sure to have enough disk space since the raw files collectively can take some space for a long year range and the project stores all intermediate files locally as well.
     
     ```bash
     make clean && make project START_YEAR=2021 END_YEAR=2023 # you can change accordingly

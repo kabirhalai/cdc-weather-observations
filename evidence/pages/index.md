@@ -6,42 +6,6 @@ title: Analysing & Exploring Global Climate Observations (Deutscher Wetterdienst
 This project explores global climate observations from the Deutscher Wetterdienst (DWD) using SQL and Evidence's interactive components. The goal is to analyze trends in temperature, precipitation, and other climate variables over time and across different regions. By leveraging DWD's extensive dataset, we aim to uncover insights into climate patterns and changes, contributing to a better understanding of global climate dynamics.
 </Details>
 
-```sql countries
-  select
-      Country
-  from warehouse.stations
-  group by Country
-```
-
-```sql stations
-  select
-      station_name
-  from warehouse.stations
-  where Country = '${inputs.selected_country.value}'
-```
-<Dropdown data={countries} name=selected_country value=Country>
-    <DropdownOption value="%" valueLabel="All Countries"/>
-</Dropdown>
-
-<Dropdown data={stations} name=selected_station value=station_name>
-    <DropdownOption value="%" valueLabel="Station Name"/>
-</Dropdown>
-
-
-```sql highest_anomaly
-select
-    a.station_id,
-    a.year,
-    a.month,
-    round(a.temp_anomaly, 2) as temp_anomaly,
-    coalesce(s.station_name, cast(a.station_id as varchar)) as station_name
-from warehouse.mart_climate_anomaly a
-left join warehouse.stations s
-    on a.station_id = s.station_id
-order by abs(a.temp_anomaly) desc
-limit 1
-```
-
 ```sql global_mean_anomaly_by_year
 select
     year,

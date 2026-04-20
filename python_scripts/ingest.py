@@ -38,8 +38,8 @@ if __name__ == "__main__":
         raise ValueError("START_YEAR and END_YEAR environment variables must be set.")
     else:
         if start_year < 2003 or end_year > datetime.now().year:
-            print("START_YEAR must be >= 2003 and END_YEAR must be <= current year.")
+            raise ValueError("START_YEAR must be >= 2003 and END_YEAR must be <= current year.")
         elif start_year > end_year:
-            print("START_YEAR must be less than or equal to END_YEAR.")
+            raise ValueError("START_YEAR must be less than or equal to END_YEAR.")
         else:
             etl_flow(start_year, end_year)
